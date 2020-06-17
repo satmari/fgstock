@@ -21,6 +21,7 @@ Route::get('/', 'mainController@index');
 //Import
 Route::get('import', 'importController@index');
 Route::post('postImportpallet', 'importController@postImportpallet');
+Route::post('postImport_sellrm', 'importController@postImport_sellrm');
 
 //Pallet
 Route::get('/pallet', 'palletController@index');

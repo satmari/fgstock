@@ -73,9 +73,23 @@ class stockController extends Controller {
 
 			$cb_to_add = $input['cb_to_add'];
 
-			$inteos = DB::connection('sqlsrv1')->select(DB::raw("SELECT [INTKEY],[BoxNum],[Produced] FROM [BdkCLZG].[dbo].[CNF_CartonBox] WHERE [BoxNum] = :somevariable"), array(
-				'somevariable' => $cb_to_add,
-			));
+			if (substr($cb_to_add, 0, 2) == '70') {
+
+				$inteos = DB::connection('sqlsrv1')->select(DB::raw("SELECT [INTKEY],[BoxNum],[Produced] FROM [BdkCLZG].[dbo].[CNF_CartonBox] WHERE [BoxNum] = :somevariable"), array(
+					'somevariable' => $cb_to_add,
+				));
+			
+			} elseif (substr($cb_to_add, 0, 2) == '71') {
+
+				$inteos = DB::connection('sqlsrv5')->select(DB::raw("SELECT [INTKEY],[BoxNum],[Produced] FROM [BdkCLZKKA].[dbo].[CNF_CartonBox] WHERE [BoxNum] = :somevariable"), array(
+					'somevariable' => $cb_to_add,
+				));
+
+            } else {
+
+		    	dd('Cannot find CB in ANY Inteos, NE POSTOJI KARTONSKA KUTIJA U NIJEDNOM INTEOSU !');
+		    }	
+
 
 			if ($inteos) {
 				//continue
@@ -162,7 +176,9 @@ class stockController extends Controller {
 				} else {
 					// dd("no");
 
-					$inteos = DB::connection('sqlsrv1')->select(DB::raw("SELECT	cb.[BoxNum] as cartonbox,
+					if (substr($line['cartonbox'], 0, 2) == '70') {
+
+						$inteos = DB::connection('sqlsrv1')->select(DB::raw("SELECT	cb.[BoxNum] as cartonbox,
 									cb.[Produced] as qty,
 									cb.[BoxQuant] as standard_qty,
 									cb.[EDITDATE] as boxclosed,
@@ -176,9 +192,34 @@ class stockController extends Controller {
 							JOIN [BdkCLZG].[dbo].[CNF_STYLE] as st ON sku.[STYKEY] = st.[INTKEY]
 							LEFT JOIN [BdkCLZG].[dbo].[CNF_Modules] as m ON cb.[Module] = m.[Module]
 							WHERE BoxNum = :somevariable"), array(
-						'somevariable' => $line['cartonbox'],
-					));
-					// dd($inteos);
+							'somevariable' => $line['cartonbox'],
+						));
+						// dd($inteos);
+					
+					} elseif (substr($line['cartonbox'], 0, 2) == '71') {
+
+						$inteos = DB::connection('sqlsrv5')->select(DB::raw("SELECT	cb.[BoxNum] as cartonbox,
+									cb.[Produced] as qty,
+									cb.[BoxQuant] as standard_qty,
+									cb.[EDITDATE] as boxclosed,
+									po.[POnum] as po,
+									sku.[Variant] as variant,
+									st.[StyCod] as style,
+									m.[ModNam] as module
+							FROM [BdkCLZKKA].[dbo].[CNF_CartonBox] as cb
+							JOIN [BdkCLZKKA].[dbo].[CNF_PO] as po ON cb.[IntKeyPO] = po.[INTKEY]
+							JOIN [BdkCLZKKA].[dbo].[CNF_SKU] as sku ON po.[SKUKEY] = sku.[INTKEY]
+							JOIN [BdkCLZKKA].[dbo].[CNF_STYLE] as st ON sku.[STYKEY] = st.[INTKEY]
+							LEFT JOIN [BdkCLZKKA].[dbo].[CNF_Modules] as m ON cb.[Module] = m.[Module]
+							WHERE BoxNum = :somevariable"), array(
+							'somevariable' => $line['cartonbox'],
+						));
+						// dd($inteos);
+
+		            } else {
+
+				    	dd('Cannot find CB in ANY Inteos, NE POSTOJI KARTONSKA KUTIJA U NIJEDNOM INTEOSU !');
+				    }
 
 					$cartonbox = $inteos[0]->cartonbox;
 

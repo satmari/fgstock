@@ -7,9 +7,9 @@
 		<div class="text-center col-md-4 col-md-offset-4">
 
 			<div class="panel panel-default">
-				<div class="panel-heading">Import Pallets</div>
+				<div class="panel-heading">Import Excel file</div>
 				
-				{!! Form::open(['files'=>True, 'method'=>'POST', 'action'=>['importController@postImportpallet']]) !!}
+				{!! Form::open(['files'=>True, 'method'=>'POST', 'action'=>['importController@postImport_sellrm']]) !!}
 					<div class="panel-body">
 						{!! Form::file('file', ['class' => 'center-block']) !!}
 					</div>
