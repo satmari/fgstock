@@ -151,6 +151,7 @@ return [
 		'Maatwebsite\Excel\ExcelServiceProvider',
 		'Bican\Roles\RolesServiceProvider',
 		'Gbrock\Table\Providers\TableServiceProvider',
+
 	],
 
 	/*
@@ -204,7 +205,8 @@ return [
 
         'Form'      => 'Illuminate\Html\FormFacade',
         'Html'      => 'Illuminate\Html\HtmlFacade',
-        'Excel' 	=> 'Maatwebsite\Excel\Facades\Excel',
+        'Excel' 	=> 'Maatwebsite\Excel\Facades\Excel'
+
 	],
 
 ];

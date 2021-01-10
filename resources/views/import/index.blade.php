@@ -7,7 +7,7 @@
 		<div class="text-center col-md-4 col-md-offset-4">
 
 			<div class="panel panel-default">
-				<div class="panel-heading">Import Excel file</div>
+				<div class="panel-heading">Function to set "Complited" status of BB - Import Excel file</div>
 				
 				{!! Form::open(['files'=>True, 'method'=>'POST', 'action'=>['importController@postImport_sellrm']]) !!}
 					<div class="panel-body">

@@ -73,13 +73,13 @@ class stockController extends Controller {
 
 			$cb_to_add = $input['cb_to_add'];
 
-			if (substr($cb_to_add, 0, 2) == '70') {
+			if ((substr($cb_to_add, 0, 2) == '70') OR  (substr($cb_to_add, 0, 2) == '84')) {
 
 				$inteos = DB::connection('sqlsrv1')->select(DB::raw("SELECT [INTKEY],[BoxNum],[Produced] FROM [BdkCLZG].[dbo].[CNF_CartonBox] WHERE [BoxNum] = :somevariable"), array(
 					'somevariable' => $cb_to_add,
 				));
 			
-			} elseif (substr($cb_to_add, 0, 2) == '71') {
+			} elseif ((substr($cb_to_add, 0, 2) == '71') OR  (substr($cb_to_add, 0, 2) == '85')) {
 
 				$inteos = DB::connection('sqlsrv5')->select(DB::raw("SELECT [INTKEY],[BoxNum],[Produced] FROM [BdkCLZKKA].[dbo].[CNF_CartonBox] WHERE [BoxNum] = :somevariable"), array(
 					'somevariable' => $cb_to_add,
@@ -176,7 +176,7 @@ class stockController extends Controller {
 				} else {
 					// dd("no");
 
-					if (substr($line['cartonbox'], 0, 2) == '70') {
+					if ((substr($line['cartonbox'], 0, 2) == '70') OR (substr($line['cartonbox'], 0, 2) == '84')) {
 
 						$inteos = DB::connection('sqlsrv1')->select(DB::raw("SELECT	cb.[BoxNum] as cartonbox,
 									cb.[Produced] as qty,
@@ -196,7 +196,7 @@ class stockController extends Controller {
 						));
 						// dd($inteos);
 					
-					} elseif (substr($line['cartonbox'], 0, 2) == '71') {
+					} elseif ((substr($line['cartonbox'], 0, 2) == '71') OR (substr($line['cartonbox'], 0, 2) == '85')) {
 
 						$inteos = DB::connection('sqlsrv5')->select(DB::raw("SELECT	cb.[BoxNum] as cartonbox,
 									cb.[Produced] as qty,

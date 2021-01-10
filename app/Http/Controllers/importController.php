@@ -156,7 +156,7 @@ class importController extends Controller {
 
 	                	// dd($row);
 	                	// dd($row['bb']);
-	                	//dd($row['R']);
+	                	// dd($row['R']);
 						
 	                	// za stavljanje lokacije_odgovornog u OS
 	                	/*
@@ -200,17 +200,19 @@ class importController extends Controller {
 					   "));
 					   */
 	            		
+	            		//-----------------------
 	            		// dd($row);
-	            		// za stavljnje status Complited
+	            		// za stavljnje status Complited Subotica
 			            // dd($row);
 						
+						/*
 	                	$sql = DB::connection('sqlsrv1')->select(DB::raw("SET NOCOUNT ON;
 	                		UPDATE [BdkCLZG].[dbo].[CNF_BlueBox] 
 							SET [Status] = '99'
 							WHERE [BlueBoxNum] = '".$row['bb']."';
 							SELECT TOP 1 [BlueBoxNum] FROM [BdkCLZG].[dbo].[CNF_BlueBox]
 					   "));
-					   
+					   */
 
 	                	//Kikinda
 						/*
@@ -221,7 +223,8 @@ class importController extends Controller {
 							SELECT TOP 1 [BlueBoxNum] FROM [172.27.161.221\INTEOSKKA].[BdkCLZKKA].[dbo].[CNF_BlueBox]
 					   "));
 					   */
-					   
+					   //-------------------------
+
 						// dd($row['bb']);
 	                	// za automatsko skeniranje rolni
 						/*
@@ -267,13 +270,108 @@ class importController extends Controller {
 							SELECT TOP 1 [BlueBoxNum] FROM [BdkCLZG].[dbo].[CNF_BlueBox]
 					   "));
 					   */
-					   
-					   
+
+						
+						
+						// dd($row['os']);
+						// dd($row['location']);
+						// dd($row['pos']);
+						
+		
+		/*	Inteos Machines 
+
+						$machine =  DB::connection('sqlsrv1')->select(DB::raw("SELECT mp.*
+						      ,mm.*
+						      ,mt.*
+						  FROM [BdkCLZG].[dbo].[CNF_MachPool] mp
+						  LEFT JOIN [BdkCLZG].[dbo].CNF_ModMach as mm ON mp.Cod = mm.MdCod
+						  LEFT JOIN [BdkCLZG].[dbo].CNF_MaTypes as mt ON mt.IntKey = mp.MaTyCod
+						  where MachNum = '".$row['os']."' "));
+						// dd($machine[0]);
+						var_dump($machine[0]->MachNum);
+
+						
+						//SET Active in Subotica
+						 $sql = DB::connection('sqlsrv1')->select(DB::raw("SET NOCOUNT ON;
+						 	UPDATE [BdkCLZG].[dbo].[CNF_MachPool]
+  							SET NotAct = NULL, InRepair = '2020-09-13 07:00:00.000'
+  							WHERE Cod = '".$machine[0]->Cod."'
+  							SELECT TOP 1 [BlueBoxNum] FROM [BdkCLZG].[dbo].[CNF_BlueBox]"));
+  
+  						//SET not active in Kikinda
+  						 $sql1 = DB::connection('sqlsrv1')->select(DB::raw("SET NOCOUNT ON;
+  							UPDATE [172.27.161.221\INTEOSKKA].[BdkCLZKKA].[dbo].[CNF_MachPool]
+  							SET NotAct = '1'
+  							WHERE Cod = '".$machine[0]->Cod."'	
+  							SELECT TOP 1 [BlueBoxNum] FROM [BdkCLZG].[dbo].[CNF_BlueBox]"));
+						
+
+  						//CHECK module/location
+  						 $sql2 = DB::connection('sqlsrv1')->select(DB::raw("
+							SELECT [Module],[ModNam]
+							FROM [BdkCLZG].[dbo].[CNF_Modules]
+							WHERE [ModNam] = '".$row['location']."' "));
+  						 // dd($sql2[0]->Module);
+  						 // var_dump($sql2[]->)
+						
+						
+						
+						//FIND FIRST NULL POSITION
+  						 $sql3 = DB::connection('sqlsrv1')->select(DB::raw("
+							SELECT TOP 1 Pos
+							FROM [BdkCLZG].[dbo].[CNF_ModMach]
+							WHERE Module = '".$sql2[0]->Module."' AND MdCod is NULL
+							"));
+  						 // dd($sql3[0]->Pos);
+  						 // var_dump($sql3[0]->Pos);
+  						 
+
+  						 
+  						 //UPDATE location and pos //REMOVE OLD
+  						  $sql = DB::connection('sqlsrv1')->select(DB::raw("SET NOCOUNT ON;
+						 	UPDATE [BdkCLZG].[dbo].[CNF_ModMach]
+						  	SET MdCod = NULL, [MaStat] = NULL
+						  	WHERE Module = '".$machine[0]->Module."' AND Pos = '".$machine[0]->Pos."'
+  							SELECT TOP 1 [BlueBoxNum] FROM [BdkCLZG].[dbo].[CNF_BlueBox]"));
+
+  						 //UPDATE location and pos //SET NEW
+  						  $sql = DB::connection('sqlsrv1')->select(DB::raw("SET NOCOUNT ON;
+						 	UPDATE [BdkCLZG].[dbo].[CNF_ModMach]
+						  	SET MdCod = '".$machine[0]->Cod."', [MaStat] = NULL
+						  	WHERE Module = '".$sql2[0]->Module."' AND Pos = '".$sql3[0]->Pos."'
+  							SELECT TOP 1 [BlueBoxNum] FROM [BdkCLZG].[dbo].[CNF_BlueBox]"));
+			*/	
+
+						
+						/*
+						// SET MASHINE TO REPAIR
+						//REMOVE location and pos FROR REPAIR machines
+  						  $sql = DB::connection('sqlsrv1')->select(DB::raw("SET NOCOUNT ON;
+						 	UPDATE [BdkCLZG].[dbo].[CNF_ModMach]
+						  	SET MdCod = NULL, [MaStat] = NULL
+						  	WHERE MdCod = '".$machine[0]->Cod."'
+  							SELECT TOP 1 [BlueBoxNum] FROM [BdkCLZG].[dbo].[CNF_BlueBox]"));
+						*/
+
+						 // ModMach table 
+  						 // [MaStat] = NULL
+  						  			// MachPool table == 
+  						 			// In Reparir = NOTNULL ([InRepair])
+  						 			// Available = NULL ([InRepair])
+
+  						 // [MaStat] = Spare = 0
+  						 // [MaStat] = Needed = 1
+  						 // [MaStat] = Ready for next chenge = 4
+  						 // [MaStat] = On Stock = 5
+  						 // [MaStat] = To be repaired = 6
+
+  						 
 						
 	                }
 	            });
 	    }
-		return redirect('/');
+		// return redirect('/');
+		// dd('Restricted zone, call IT');
 	}
 
 	
