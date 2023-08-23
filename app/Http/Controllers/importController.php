@@ -18,8 +18,7 @@ use DB;
 
 class importController extends Controller {
 
-		public function index()
-	{
+	public function index() {
 		//
 		return view('import.index');
 	}
